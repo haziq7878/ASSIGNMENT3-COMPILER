@@ -2,6 +2,6 @@
 
 GRAMMER
 
-S - L = R | R
-L - * R | id
-R - L
+S -> L = R | R
+L -> \* R | id
+R -> L
