@@ -10,6 +10,8 @@ char non_terminals[100] = {'\0'};          // an array of non-terminals
 int non_terminals_index = 0;               // index for non-terminals
 char terminals[100] = {'\0'};              // an array of terminals
 int terminals_index = 0;                   // index for terminals
+
+int total_productions;
 // function to break apart a grammer into left side terminal and its productions
 
 char break_prod(char *prod)
@@ -69,6 +71,9 @@ void file_handler()
     count++;
     state_list[state_counter][production_index][count] = '.';
     count++;
+    // Adding start state to non terminals list
+    non_terminals[non_terminals_index] = 'Q';
+    non_terminals_index++;
     while (fgets(temp, sizeof(temp), ptr) != NULL)
     {
         for (int i = 0; i < strlen(temp); i++)
@@ -77,7 +82,7 @@ void file_handler()
             {
                 continue;
             }
-            else if (temp[i] != '\n' && temp[i] != '>' && temp[i] != '|')
+            else if (temp[i] != '\n' && temp[i] != '>' && temp[i] != '|' && temp[i] != '-')
             {
                 if (production_index == 0)
                 {
@@ -93,6 +98,13 @@ void file_handler()
                 state_list[state_counter][production_index][count] = temp[i];
                 count++;
                 state_list[state_counter][production_index][count] = '.';
+                count++;
+            }
+            else if (temp[i] == '-')
+            {
+                non_terminals[non_terminals_index] = temp[i - 1];
+                non_terminals_index++;
+                state_list[state_counter][production_index][count] = temp[i];
                 count++;
             }
             else if (temp[i] == '|')
@@ -116,6 +128,7 @@ void file_handler()
         memset(temp, 0, 80);
     }
     state_counter++;
+    total_productions = production_index;
     fclose(ptr);
 }
 
@@ -197,7 +210,6 @@ int main()
     }
     // new_state formate char new_state1[100][100] = {"Q->S.","Q->SLR"}; anthing in 2d array. just store it in tthis kinds of array
 
-
     char new_state1[100][100] = {"Q->S."};
     int length1 = sizeof(new_state1) / sizeof(new_state1[0]);
     char new_state2[100][100] = {"S->L.=R"};
@@ -216,7 +228,7 @@ int main()
     }
 
     // to seperate out non terminals
-    for (int j = 0; j < production_index; j++)
+    for (int j = 0; j < total_productions; j++)
     {
         for (int i = 0; i < strlen(state_list[0][j]); i++)
         {
