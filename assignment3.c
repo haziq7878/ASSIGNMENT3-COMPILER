@@ -47,7 +47,10 @@ int main()
     {
         for (int i = 0; i < strlen(temp); i++)
         {
-            if (temp[i] != '\n' && temp[i] != '>')
+            if(temp[i]==' '){
+                continue;
+            }
+            else if (temp[i] != '\n' && temp[i] != '>' && temp[i] != '|')
             {
                 state_list[0][production_index][count] = temp[i];
                 count++;
@@ -59,14 +62,22 @@ int main()
                 state_list[0][production_index][count] = '.';
                 count++;
             }
+            else if (temp[i] == '|')
+            {
+                production_index++;
+                count = 0;
+                while(state_list[0][production_index-1][count]!='.'){
+                    state_list[0][production_index][count] = state_list[0][production_index-1][count];
+                    count++;
+                }
+                state_list[0][production_index][count] = '.';
+                count++;
+            }
             else
             {
                 production_index++;
             }
         }
-        count = 0;
-        memset(temp, 0, 80);
-    }
     for (int i = 0; i < 3; i++)
     {
         printf("%s\n", state_list[0][i]);
