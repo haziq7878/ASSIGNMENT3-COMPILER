@@ -43,6 +43,14 @@ int main()
     }
     int count = 0;
     int production_index = 0;
+    state_list[state_counter][production_index][count] = 'Q';
+    count++;
+    state_list[state_counter][production_index][count] = '-';
+    count++;
+    state_list[state_counter][production_index][count] = '>';
+    count++;
+    state_list[state_counter][production_index][count] = '.';
+    count++;
     while (fgets(temp, sizeof(temp), ptr) != NULL)
     {
         for (int i = 0; i < strlen(temp); i++)
@@ -52,25 +60,30 @@ int main()
             }
             else if (temp[i] != '\n' && temp[i] != '>' && temp[i] != '|')
             {
-                state_list[0][production_index][count] = temp[i];
+                if(production_index==0){
+                    state_list[state_counter][production_index][count] = temp[i];
+                    count=0;
+                    production_index++;
+                }
+                state_list[state_counter][production_index][count] = temp[i];
                 count++;
             }
             else if (temp[i] == '>')
             {
-                state_list[0][production_index][count] = temp[i];
+                state_list[state_counter][production_index][count] = temp[i];
                 count++;
-                state_list[0][production_index][count] = '.';
+                state_list[state_counter][production_index][count] = '.';
                 count++;
             }
             else if (temp[i] == '|')
             {
                 production_index++;
                 count = 0;
-                while(state_list[0][production_index-1][count]!='.'){
-                    state_list[0][production_index][count] = state_list[0][production_index-1][count];
+                while(state_list[state_counter][production_index-1][count]!='.'){
+                    state_list[state_counter][production_index][count] = state_list[state_counter][production_index-1][count];
                     count++;
                 }
-                state_list[0][production_index][count] = '.';
+                state_list[state_counter][production_index][count] = '.';
                 count++;
             }
             else
@@ -78,7 +91,10 @@ int main()
                 production_index++;
             }
         }
-    for (int i = 0; i < 3; i++)
+        count = 0;
+        memset(temp, 0, 80);
+    }
+    for (int i = 0; i < strlen(state_list[0][0]); i++)
     {
         printf("%s\n", state_list[0][i]);
     }
