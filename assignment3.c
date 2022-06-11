@@ -28,10 +28,8 @@ char break_prod(char *prod)
 }
 
 // state counter
-int state_counter = 0;;
+int state_counter = 0;
 char state_list[100][100][100] = {{'\0'}}; // state_list
-
-
 
 int main()
 {
@@ -49,9 +47,16 @@ int main()
     {
         for (int i = 0; i < strlen(temp); i++)
         {
-            if (temp[i] != '\n')
+            if (temp[i] != '\n' && temp[i] != '>')
             {
                 state_list[0][production_index][count] = temp[i];
+                count++;
+            }
+            else if (temp[i] == '>')
+            {
+                state_list[0][production_index][count] = temp[i];
+                count++;
+                state_list[0][production_index][count] = '.';
                 count++;
             }
             else
