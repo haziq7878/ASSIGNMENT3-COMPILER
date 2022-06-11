@@ -38,6 +38,8 @@ int main()
     char temp[80];                    // temp array used for copying a single line from a file
     char non_terminals[100] = {'\0'}; // an array of non-terminals
     int non_terminals_index = 0;      // index for non-terminals
+    char terminals[100] = {'\0'};     // an array of terminals
+    int terminals_index = 0;          // index for terminals
     if (ptr == NULL)
     {
         printf("There was an error in opening the file");
@@ -73,6 +75,7 @@ int main()
                     count = 0;
                     production_index++;
                 }
+
                 state_list[state_counter][production_index][count] = temp[i];
                 count++;
             }
@@ -129,6 +132,38 @@ int main()
     // }
     for (int i = 0; i < strlen(non_terminals); i++)
     {
-        printf("Terminals: %c\n", non_terminals[i]);
+        printf("Non Terminals: %c\n", non_terminals[i]);
+    }
+
+    // to seperate out non terminals
+    for (int j = 0; j < production_index; j++)
+    {
+        for (int i = 0; i < strlen(state_list[0][j]); i++)
+        {
+            int flag;
+            for (int k = 0; k < strlen(non_terminals); k++)
+            {
+                if (state_list[0][j][i] != non_terminals[k] && state_list[0][j][i] != '-' && state_list[0][j][i] != '>' && state_list[0][j][i] != '.')
+                {
+                    flag = 1;
+                }
+                else
+                {
+                    flag = 0;
+                    break;
+                }
+            }
+            if (flag == 1)
+            {
+
+                terminals[terminals_index] = state_list[0][j][i];
+                terminals_index++;
+            }
+        }
+    }
+
+    for (int i = 0; i < strlen(terminals); i++)
+    {
+        printf("Terminals: %c\n", terminals[i]);
     }
 }
