@@ -35,7 +35,9 @@ int main()
 {
     FILE *ptr;
     ptr = fopen("grammer.txt", "r");
-    char temp[80]; // temp array used for copying a single line from a file
+    char temp[80];                    // temp array used for copying a single line from a file
+    char non_terminals[100] = {'\0'}; // an array of non-terminals
+    int non_terminals_index = 0;      // index for non-terminals
     if (ptr == NULL)
     {
         printf("There was an error in opening the file");
@@ -45,6 +47,9 @@ int main()
     int production_index = 0;
     state_list[state_counter][production_index][count] = 'Q';
     count++;
+    // Adding start state to non terminals list
+    non_terminals[non_terminals_index] = 'Q';
+    non_terminals_index++;
     state_list[state_counter][production_index][count] = '-';
     count++;
     state_list[state_counter][production_index][count] = '>';
@@ -55,14 +60,17 @@ int main()
     {
         for (int i = 0; i < strlen(temp); i++)
         {
-            if(temp[i]==' '){
+            if (temp[i] == ' ')
+            {
                 continue;
             }
-            else if (temp[i] != '\n' && temp[i] != '>' && temp[i] != '|')
+
+            else if (temp[i] != '\n' && temp[i] != '>' && temp[i] != '|' && temp[i] != '-')
             {
-                if(production_index==0){
+                if (production_index == 0)
+                {
                     state_list[state_counter][production_index][count] = temp[i];
-                    count=0;
+                    count = 0;
                     production_index++;
                 }
                 state_list[state_counter][production_index][count] = temp[i];
@@ -75,12 +83,20 @@ int main()
                 state_list[state_counter][production_index][count] = '.';
                 count++;
             }
+            else if (temp[i] == '-')
+            {
+                non_terminals[non_terminals_index] = temp[i - 1];
+                non_terminals_index++;
+                state_list[state_counter][production_index][count] = temp[i];
+                count++;
+            }
             else if (temp[i] == '|')
             {
                 production_index++;
                 count = 0;
-                while(state_list[state_counter][production_index-1][count]!='.'){
-                    state_list[state_counter][production_index][count] = state_list[state_counter][production_index-1][count];
+                while (state_list[state_counter][production_index - 1][count] != '.')
+                {
+                    state_list[state_counter][production_index][count] = state_list[state_counter][production_index - 1][count];
                     count++;
                 }
                 state_list[state_counter][production_index][count] = '.';
@@ -107,8 +123,12 @@ int main()
     {
         break_prod(grammer[i]);
     }
-    for (int i = 0; i < 3; i++)
+    // for (int i = 0; i < 3; i++)
+    // {
+    //     printf("%s\n", grammer[i]);
+    // }
+    for (int i = 0; i < strlen(non_terminals); i++)
     {
-        printf("%s\n", grammer[i]);
+        printf("Terminals: %c\n", non_terminals[i]);
     }
 }
