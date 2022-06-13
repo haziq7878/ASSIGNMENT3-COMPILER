@@ -10,9 +10,23 @@ char non_terminals[100] = {'\0'};          // an array of non-terminals
 int non_terminals_index = 0;               // index for non-terminals
 char terminals[100] = {'\0'};              // an array of terminals
 int terminals_index = 0;                   // index for terminals
+char production[100][100][100] = {{'\0'}}; // productions are stored here
 
 int total_productions;
 // function to break apart a grammer into left side terminal and its productions
+
+int find_index(char terminal_symbol)
+{
+    for (int i = 0; i < strlen(terminals); i++)
+    {
+        // printf("%c terminals\n",non_terminals[i]);
+        if (non_terminals[i] == terminal_symbol)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
 
 char break_prod(char *prod)
 {
@@ -257,5 +271,46 @@ int main()
     for (int i = 0; i < strlen(terminals); i++)
     {
         printf("Terminals: %c\n", terminals[i]);
+    }
+
+    // to separate production
+
+    for (int j = 0; j < total_productions; j++)
+    {
+        int flag = 0;
+        char terminal = state_list[0][j][0];
+        int index = find_index(terminal);
+        int pro_index = strlen(production[index][0]); // production index
+        int count = 0;
+        for (int i = 1; i < strlen(state_list[0][j]); i++)
+        {
+            if (flag == 1)
+            {
+                production[index][pro_index][count] = state_list[0][j][i];
+                count += 1;
+            }
+            if (state_list[0][j][i] == '>')
+            {
+                printf("\n");
+                flag = 1;
+            }
+        }
+    }
+    printf("productions\n");
+    for (int i = 0; i < 100; i++)
+    {
+        if (production[i][0][0] == '\0')
+        {
+            break;
+        }
+        for (int j = 0; j < strlen(production[i][0]); j++)
+        {
+            if (production[i][j][0] == '\0')
+            {
+                break;
+            }
+            printf("%s\n", production[i][j]);
+        }
+        /* code */
     }
 }
