@@ -13,11 +13,68 @@ int terminals_index = 0;                   // index for terminals
 char production[100][100][100] = {{'\0'}}; // productions are stored here
 
 // Testing stuff here
-char stack[100] = {'\0'};
-char new_state[100][100] = {{'\0'}};
+char new_states[100][100] = {{'\0'}};
 
 int total_productions;
+/*           DEFINING STACK HERE           */
+int MAXSIZE = 20;
+int stack[8];
+int top = -1;
 
+int isempty()
+{
+
+    if (top == -1)
+        return 1;
+    else
+        return 0;
+}
+
+int isfull()
+{
+
+    if (top == MAXSIZE)
+        return 1;
+    else
+        return 0;
+}
+
+int peek()
+{
+    return stack[top];
+}
+
+int pop()
+{
+    int data;
+
+    if (!isempty())
+    {
+        data = stack[top];
+        top = top - 1;
+        return data;
+    }
+    else
+    {
+        printf("Could not retrieve data, Stack is empty.\n");
+    }
+}
+
+int push(int data)
+{
+
+    if (!isfull())
+    {
+        top = top + 1;
+        stack[top] = data;
+    }
+    else
+    {
+        printf("Could not insert data, Stack is full.\n");
+    }
+}
+
+/*              END OF STACK               */
 // swap function to swap two characters:
 int swap_dot(char string[], int index)
 {
@@ -346,9 +403,22 @@ int main()
     }
 
     // code for state traversal
+    push(0);
+    // checking for empty stack
+    while (!isempty())
+    {
+        int current_state = pop();
+        int production_number = 0;
+        char current_production[100] = {'\0'};
 
-    //     while (sizeof(stack) != 0)
-    //     {
-    //         printf("%d", sizeof(stack));
-    //     }
+        // for (int i = 0; i < 100; i++)
+        // {
+        //     if (state_list[current_state][production_number][i] != '\0')
+        //     {
+        //         current_production = state_list[current_state][production_number][i];
+        //     }
+        //     break;
+        // }
+        printf("AT PRODUCTION: %s", current_production);
+    }
 }
