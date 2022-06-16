@@ -12,6 +12,10 @@ char terminals[100] = {'\0'};              // an array of terminals
 int terminals_index = 0;                   // index for terminals
 char production[100][100][100] = {{'\0'}}; // productions are stored here
 
+// Testing stuff here
+char queue[100] = {'\0'};
+char new_state[100][100] = {{'\0'}};
+
 int total_productions;
 // function to break apart a grammer into left side terminal and its productions
 
@@ -27,7 +31,20 @@ int find_index(char terminal_symbol)
     }
     return -1;
 }
-
+int find_production_count(int index)
+{
+    int i = 0;
+    while (i < 100)
+    {
+        printf("production count %d", i);
+        if (production[index][i][0] == '\0')
+        {
+            return i;
+        }
+        i = i + 1;
+    }
+    return -1;
+}
 char break_prod(char *prod)
 {
     // to count number of productions to make an array list
@@ -208,6 +225,7 @@ void display_states()
 
 int main()
 {
+    // char production[100][100][100] = {{'\0'}};
     file_handler();
     for (int i = 0; i < strlen(state_list[0][0]); i++)
     {
@@ -274,14 +292,15 @@ int main()
     }
 
     // to separate production
-
     for (int j = 0; j < total_productions; j++)
     {
         int flag = 0;
         char terminal = state_list[0][j][0];
         int index = find_index(terminal);
-        int pro_index = strlen(production[index][0]); // production index
+        int pro_index = find_production_count(index); // production index
         int count = 0;
+        printf("%c %d %d\n", terminal, index, pro_index);
+
         for (int i = 1; i < strlen(state_list[0][j]); i++)
         {
             if (flag == 1)
@@ -295,7 +314,9 @@ int main()
                 flag = 1;
             }
         }
+        printf("%s\n", production[index][pro_index]);
     }
+
     printf("productions\n");
     for (int i = 0; i < 100; i++)
     {
@@ -303,7 +324,7 @@ int main()
         {
             break;
         }
-        for (int j = 0; j < strlen(production[i][0]); j++)
+        for (int j = 0; j < 100; j++)
         {
             if (production[i][j][0] == '\0')
             {
@@ -311,6 +332,5 @@ int main()
             }
             printf("%s\n", production[i][j]);
         }
-        /* code */
     }
 }
