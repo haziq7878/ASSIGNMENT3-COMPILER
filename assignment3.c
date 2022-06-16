@@ -13,10 +13,32 @@ int terminals_index = 0;                   // index for terminals
 char production[100][100][100] = {{'\0'}}; // productions are stored here
 
 // Testing stuff here
-char queue[100] = {'\0'};
+char stack[100] = {'\0'};
 char new_state[100][100] = {{'\0'}};
 
 int total_productions;
+
+// swap function to swap two characters:
+int swap_dot(char string[], int index)
+{
+    char temp = string[index];
+    char temp2 = string[index + 1];
+    string[index] = temp2;
+    string[index + 1] = temp;
+    return 0;
+}
+
+// function to find dot in the production
+// int find_dot(char production)
+// {
+//     for (int i = 0; i < strlen(production); i++)
+//     {
+//         if (production[i] == '.')
+//         {
+//         }
+//     }
+// }
+
 // function to break apart a grammer into left side terminal and its productions
 
 int find_index(char terminal_symbol)
@@ -36,7 +58,6 @@ int find_production_count(int index)
     int i = 0;
     while (i < 100)
     {
-        printf("production count %d", i);
         if (production[index][i][0] == '\0')
         {
             return i;
@@ -231,25 +252,17 @@ int main()
     {
         printf("%s\n", state_list[0][i]);
     }
-    char grammer[3][9] =
-        {
-            "S->L=R|R\0",
-            "L->*R|i\0",
-            "R->L\0"};
-    for (int i = 0; i < 3; i++)
-    {
-        break_prod(grammer[i]);
-    }
+
     // new_state formate char new_state1[100][100] = {"Q->S.","Q->SLR"}; anthing in 2d array. just store it in tthis kinds of array
 
-    char new_state1[100][100] = {"Q->.S"};
-    int length1 = sizeof(new_state1) / sizeof(new_state1[0]);
-    char new_state2[100][100] = {"S->L.=R"};
-    int length2 = sizeof(new_state2) / sizeof(new_state2[0]);
-    printf("result %d\n",check_state(new_state1, length1));
-    display_states();
-    printf("result %d\n",check_state(new_state2, length2));
-    display_states();
+    // char new_state1[100][100] = {"Q->.S"};
+    // int length1 = sizeof(new_state1) / sizeof(new_state1[0]);
+    // char new_state2[100][100] = {"S->L.=R"};
+    // int length2 = sizeof(new_state2) / sizeof(new_state2[0]);
+    // printf("result %d\n", check_state(new_state1, length1));
+    // display_states();
+    // printf("result %d\n", check_state(new_state2, length2));
+    // display_states();
     // for (int i = 0; i < 3; i++)
     // {
     //     printf("%s\n", grammer[i]);
@@ -288,6 +301,7 @@ int main()
 
     for (int i = 0; i < strlen(terminals); i++)
     {
+
         printf("Terminals: %c\n", terminals[i]);
     }
 
@@ -299,7 +313,6 @@ int main()
         int index = find_index(terminal);
         int pro_index = find_production_count(index); // production index
         int count = 0;
-        printf("%c %d %d\n", terminal, index, pro_index);
 
         for (int i = 1; i < strlen(state_list[0][j]); i++)
         {
@@ -310,11 +323,9 @@ int main()
             }
             if (state_list[0][j][i] == '>')
             {
-                printf("\n");
                 flag = 1;
             }
         }
-        printf("%s\n", production[index][pro_index]);
     }
 
     printf("productions\n");
@@ -333,4 +344,11 @@ int main()
             printf("%s\n", production[i][j]);
         }
     }
+
+    // code for state traversal
+
+    //     while (sizeof(stack) != 0)
+    //     {
+    //         printf("%d", sizeof(stack));
+    //     }
 }
