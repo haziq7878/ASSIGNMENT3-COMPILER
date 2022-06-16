@@ -166,7 +166,7 @@ void file_handler()
 // This function is used to check if the new productions created through traversal is already in the store as state or not
 // First it will find the total matched productions in a state and compare it with total productions in the new production list
 // If its equal that means that the new production state is already in the state list and if not then it will add it in the state list
-void check_state(char new_state[100][100], int length)
+int check_state(char new_state[100][100], int length)
 {
     int production_count_new_state = 0; // This variable is used to count the number of productions in the new state
     int check_match;                    // We will count how many strings were matched
@@ -187,13 +187,11 @@ void check_state(char new_state[100][100], int length)
                 if (strcmp(new_state[count_new_state_production], state_list[i][j]) == 0)
                 {
                     check_match++; // string matched
-                    // printf("match");
                 }
             }
         }
         if (check_match == production_count_new_state)
         {
-            // printf("break");
             break;
         }
     }
@@ -203,7 +201,9 @@ void check_state(char new_state[100][100], int length)
         // This will append the new state in the state list
         add_new_state(length, new_state);
         state_counter++;
+        return 1;
     }
+    return 0;
 }
 
 // This function is simply to display the chronicles
@@ -242,13 +242,13 @@ int main()
     }
     // new_state formate char new_state1[100][100] = {"Q->S.","Q->SLR"}; anthing in 2d array. just store it in tthis kinds of array
 
-    char new_state1[100][100] = {"Q->S."};
+    char new_state1[100][100] = {"Q->.S"};
     int length1 = sizeof(new_state1) / sizeof(new_state1[0]);
     char new_state2[100][100] = {"S->L.=R"};
     int length2 = sizeof(new_state2) / sizeof(new_state2[0]);
-    check_state(new_state1, length1);
+    printf("result %d\n",check_state(new_state1, length1));
     display_states();
-    check_state(new_state2, length2);
+    printf("result %d\n",check_state(new_state2, length2));
     display_states();
     // for (int i = 0; i < 3; i++)
     // {
