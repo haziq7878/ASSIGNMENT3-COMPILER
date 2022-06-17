@@ -57,6 +57,7 @@ int pop()
     else
     {
         printf("Could not retrieve data, Stack is empty.\n");
+        return -1;
     }
 }
 
@@ -71,6 +72,7 @@ int push(int data)
     else
     {
         printf("Could not insert data, Stack is full.\n");
+        return -1;
     }
 }
 
@@ -161,7 +163,7 @@ char find_closure(char new_state[100][100], int productions, int index)
 
 int find_index(char terminal_symbol)
 {
-    for (int i = 0; i < strlen(terminals); i++)
+    for (int i = 0; i < strlen(non_terminals); i++)
     {
         // printf("%c terminals\n",non_terminals[i]);
         if (non_terminals[i] == terminal_symbol)
@@ -262,6 +264,10 @@ void file_handler()
                 }
                 state_list[state_counter][production_index][count] = temp[i];
                 count++;
+                if (i == strlen(temp) - 1)
+                {
+                    production_index++;
+                }
             }
             else if (temp[i] == '>')
             {
@@ -351,7 +357,7 @@ void display_states()
     for (int i = 0; i < state_counter; i++)
     {
         printf("state %d\n", i);
-        for (int j = 0; j < strlen(state_list[i][0]); j++)
+        for (int j = 0; j < total_productions; j++)
         {
             if (strcmp(state_list[i][j], "\0") != 0)
             {
@@ -366,7 +372,7 @@ int main()
 {
     // char production[100][100][100] = {{'\0'}};
     file_handler();
-    for (int i = 0; i < strlen(state_list[0][0]); i++)
+    for (int i = 0; i < total_productions; i++)
     {
         printf("%s\n", state_list[0][i]);
     }
@@ -449,6 +455,7 @@ int main()
     printf("productions\n");
     for (int i = 0; i < 100; i++)
     {
+        printf("index %d\n", i);
         if (production[i][0][0] == '\0')
         {
             break;
@@ -459,6 +466,7 @@ int main()
             {
                 break;
             }
+            printf("%d \n", j);
             printf("%s\n", production[i][j]);
         }
     }
