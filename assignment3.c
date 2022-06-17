@@ -114,6 +114,20 @@ int is_NT(int index, char production[], char non_terminal)
     return 0;
 }
 
+// returns the index of non terminal in the non-terminals array if non-terminal is found
+int find_closure(char new_state[], int productions, int index)
+{
+
+    for (int k = 0; k < strlen(non_terminals); k++)
+    {
+        if (is_NT(index, new_state, non_terminals[k]) == 1)
+        {
+            return k;
+        }
+    }
+    return -1;
+}
+
 int find_index(char terminal_symbol)
 {
     for (int i = 0; i < strlen(terminals); i++)
@@ -429,9 +443,13 @@ int main()
         char current_non_terminal;
         for (int j = 0; j < strlen(non_terminals); j++)
         {
+            char new_state[100][100] = {{'\0'}}; // adds new state for each traversal into it
+            int moved = 0;                       // boolean to keep track of if the dot moved or not
+            int new_state_prod = 0;              // keeps track of how many sproductions have been made for a specific state
+            char closure[100];                   // stores the closure
+            int closure_index = -1;              // stores the index of the closure
             printf("non terminal %c\n", non_terminals[j]);
             current_non_terminal = non_terminals[j];
-            char closure[100];
             for (int i = 0; i < 100; i++)
             {
                 memset(current_production, '\0', 100);
@@ -445,15 +463,37 @@ int main()
                     current_production[j] = state_list[current_state][i][j];
                 }
                 printf("AT PRODUCTION: %s\n", current_production);
-                // printf("AT PRODUCTION: %s\n", current_production);
-                // current_production = state_list[current_state][production_number];
                 int dot = find_dot(current_production);
                 if (is_NT(dot, current_production, non_terminals[j]) == 1)
                 {
                     swap_dot(current_production, dot);
                     printf("MOVED: %s\n", current_production);
+                    for (int i = 0; i < strlen(current_production); i++)
+                    {
+                        new_state[new_state_prod][i] = current_production[i];
+                    }
+                    moved = 1;
+                }
+                if (moved == 1)
+                {
+                    new_state_prod++;
+                    moved = 0;
+                }
+
+                for (int k = 0; k < new_state_prod; k++)
+                {
+                    closure_index = find_closure(new_state[k], new_state_prod, dot + 1);
+                }
+                if (closure_index != -1)
+                {
+                    for (int k = 0; k < strlen(production[closure_index]); k++)
+                    {
+                        closure[0] = non_terminals[closure_index];
+                        printf("uhhh: %s->%s\n", closure, production[closure_index][k]);
+                    }
                 }
             }
+
             production_number++;
         }
     }
