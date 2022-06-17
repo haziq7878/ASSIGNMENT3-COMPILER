@@ -85,18 +85,34 @@ int swap_dot(char string[], int index)
     return 0;
 }
 
-// function to find dot in the production
-// int find_dot(char production)
-// {
-//     for (int i = 0; i < strlen(production); i++)
-//     {
-//         if (production[i] == '.')
-//         {
-//         }
-//     }
-// }
-
 // function to break apart a grammer into left side terminal and its productions
+int find_dot(char string[])
+{
+    for (int i = 0; i < 20; i++)
+    {
+        if (string[i] == '\0')
+        {
+            break;
+        }
+        if (string[i] == '.')
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+// Find if we need to add a new state for the current non terminal
+int is_NT(int index, char production[], char non_terminal)
+{
+
+    if (non_terminal == production[index + 1])
+    {
+        return 1;
+    }
+
+    return 0;
+}
 
 int find_index(char terminal_symbol)
 {
@@ -410,15 +426,59 @@ int main()
         int current_state = pop();
         int production_number = 0;
         char current_production[100] = {'\0'};
+        char current_non_terminal;
+        for (int j = 0; j < strlen(non_terminals); j++)
+        {
+            printf("non terminal %c\n", non_terminals[j]);
+            current_non_terminal = non_terminals[j];
+            char closure[100];
+            for (int i = 0; i < 100; i++)
+            {
+                memset(current_production, '\0', 100);
 
-        // for (int i = 0; i < 100; i++)
-        // {
-        //     if (state_list[current_state][production_number][i] != '\0')
-        //     {
-        //         current_production = state_list[current_state][production_number][i];
-        //     }
-        //     break;
-        // }
-        printf("AT PRODUCTION: %s", current_production);
+                if (state_list[current_state][i][0] == '\0')
+                {
+                    break;
+                }
+                for (int j = 0; j < strlen(state_list[current_state][i]); j++)
+                {
+                    current_production[j] = state_list[current_state][i][j];
+                }
+                printf("AT PRODUCTION: %s\n", current_production);
+                // printf("AT PRODUCTION: %s\n", current_production);
+                // current_production = state_list[current_state][production_number];
+                int dot = find_dot(current_production);
+                if (is_NT(dot, current_production, non_terminals[j]) == 1)
+                {
+                    swap_dot(current_production, dot);
+                    printf("MOVED: %s\n", current_production);
+                }
+            }
+            production_number++;
+        }
     }
+
+    // for x -> non_terminal:
+    //     closure[100];
+    //     for(int i=0;i=100;i++){
+    //         if(state_list[stack[-1]][i][0]=='\0'){
+    //             break;
+    //         }
+    //         2d_list[100] = state_list[stack[-1]][0]
+    //         dot = find_dot(2d_list[100])
+    //         if(traverse(dot,1d_list,non_terminal[x])==1){
+    //             new_state.append(2d_list)
+    //             closure.append(2d_list[dot+2])
+    //         }
+    //     }
+    //     2d_list[100][100] = state_list[stack[-1]][0]
+
+    //     def traverse(dot,list,x):
+    //     if(dot<strlen(list)-1){
+    //         if(1d_list[dot+1]==x){
+    //             1d_list[dot],1d_list[dot+1] = 1d_list[dot+1],1d_list[dot]
+    //             return 1
+    //         }
+    //     }
+    //     return 0
 }
