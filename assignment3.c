@@ -115,17 +115,48 @@ int is_NT(int index, char production[], char non_terminal)
 }
 
 // returns the index of non terminal in the non-terminals array if non-terminal is found
-int find_closure(char new_state[], int productions, int index)
+char find_closure(char new_state[100][100], int productions, int index)
 {
-
-    for (int k = 0; k < strlen(non_terminals); k++)
+    int closure_index = 0;
+    for (int m = 0; m < productions; m++)
     {
-        if (is_NT(index, new_state, non_terminals[k]) == 1)
+        for (int k = 0; k < strlen(non_terminals); k++)
         {
-            return k;
+            closure_index = find_dot(new_state[m]);
+            if (is_NT(closure_index, new_state[m], non_terminals[k]) == 1)
+            {
+                printf("hea: %c     %s %d\n", non_terminals[k], new_state[m], closure_index);
+                // Finds number of productions for the non terminal
+                int length = 0;
+                for (int i = 0; i < 100; i++)
+                {
+                    // issue here due to productions list the print should return productions of R
+                    printf("work pls: %c\n", production[3][0][i]);
+                    if (production[k][i][0] == '\0')
+                    {
+                        continue;
+                    }
+                    length++;
+                }
+                for (int j = 0; j < length; j++)
+                {
+                    new_state[productions][0] = non_terminals[k];
+                    new_state[productions][1] = '-';
+                    new_state[productions][2] = '>';
+                    for (int n = 0; n < strlen(production[k][j]); n++)
+                    {
+                        new_state[productions][3 + n] = production[k][j][n];
+                    }
+                    productions++;
+                    printf("uhhh: %c->%s\n", non_terminals[k], production[k][j]);
+                }
+                // for (int i = 0; i < 100; i++)
+                // {
+                //     printf("YAHH: %c\n", new_state[productions][i]);
+                // }
+            }
         }
     }
-    return -1;
 }
 
 int find_index(char terminal_symbol)
@@ -480,18 +511,7 @@ int main()
                     moved = 0;
                 }
 
-                for (int k = 0; k < new_state_prod; k++)
-                {
-                    closure_index = find_closure(new_state[k], new_state_prod, dot + 1);
-                }
-                if (closure_index != -1)
-                {
-                    for (int k = 0; k < strlen(production[closure_index]); k++)
-                    {
-                        closure[0] = non_terminals[closure_index];
-                        printf("uhhh: %s->%s\n", closure, production[closure_index][k]);
-                    }
-                }
+                closure_index = find_closure(new_state, new_state_prod, dot + 1);
             }
 
             production_number++;
