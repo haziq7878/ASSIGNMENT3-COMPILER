@@ -116,41 +116,10 @@ int is_NT(int index, char production[], char non_terminal)
     return 0;
 }
 
-int check_new_state(char new_state[100][100], int productions, int index, int length, int k)
-{
-    char temp[100];
-    for (int j = 0; j < length; j++)
-    {
-        char temp[100] = {'\0'};
-        temp[0] = non_terminals[k];
-        temp[1] = '-';
-        temp[2] = '>';
-        for (int n = 0; n < strlen(production[k][j]); n++)
-        {
-            printf("this: %c\n", production[k][j][n]);
-            temp[3 + n] = production[k][j][n];
-        }
-        printf("%s temp\n", temp);
-        for (int i = 0; i < 100; i++)
-        {
-            if (new_state[i][0] == '\0')
-            {
-                break;
-            }
-            if (strcmp(new_state[i], temp) == 0)
-            {
-                return 0;
-            }
-        }
-    }
-    return 1;
-}
-
 // returns the index of non terminal in the non-terminals array if non-terminal is found
 char find_closure(char new_state[100][100], int productions, int index)
 {
     int closure_index = 0;
-    int result = 0;
     for (int m = 0; m < productions; m++)
     {
         for (int k = 0; k < strlen(non_terminals); k++)
@@ -169,22 +138,17 @@ char find_closure(char new_state[100][100], int productions, int index)
                     }
                     length++;
                 }
-                result = check_new_state(new_state, productions, index, length, k);
-                printf("result %d\n", result);
-                if (result == 1)
+                for (int j = 0; j < length; j++)
                 {
-                    for (int j = 0; j < length; j++)
+                    new_state[productions][0] = non_terminals[k];
+                    new_state[productions][1] = '-';
+                    new_state[productions][2] = '>';
+                    for (int n = 0; n < strlen(production[k][j]); n++)
                     {
-                        new_state[productions][0] = non_terminals[k];
-                        new_state[productions][1] = '-';
-                        new_state[productions][2] = '>';
-                        for (int n = 0; n < strlen(production[k][j]); n++)
-                        {
-                            new_state[productions][3 + n] = production[k][j][n];
-                        }
-                        productions++;
-                        printf("Closure: %c->%s\n", non_terminals[k], production[k][j]);
+                        new_state[productions][3 + n] = production[k][j][n];
                     }
+                    productions++;
+                    printf("Closure: %c->%s\n", non_terminals[k], production[k][j]);
                 }
                 // for (int i = 0; i < 100; i++)
                 // {
@@ -347,10 +311,6 @@ void file_handler()
 // If its equal that means that the new production state is already in the state list and if not then it will add it in the state list
 int check_state(char new_state[100][100], int length)
 {
-    if (new_state[0][0] == '\0')
-    {
-        return 0;
-    }
     int production_count_new_state; // This variable is used to count the number of productions in the new state
     int x = 0;
     int check_match; // We will count how many strings were matched
@@ -527,7 +487,6 @@ int main()
         /* THIS PART IS FOR TERMINALS TRAVERSAL*/
         for (int j = 0; j < strlen(non_terminals); j++)
         {
-            // printf("stack counter %d\n",state_counter);
             int created_state = 0;
             char new_state[100][100] = {{'\0'}}; // adds new state for each traversal into it
             int moved = 0;                       // boolean to keep track of if the dot moved or not
@@ -548,7 +507,6 @@ int main()
                 {
                     current_production[j] = state_list[current_state][i][j];
                 }
-                printf("stack counter %d\n", state_counter);
                 printf("AT PRODUCTION: %s\n", current_production);
                 int dot = find_dot(current_production);
                 if (current_production[dot + 1] != '\0' && is_NT(dot, current_production, non_terminals[j]) == 1)
@@ -566,13 +524,22 @@ int main()
                 {
                     new_state_prod++;
                     closure_index = find_closure(new_state, new_state_prod, dot + 1);
-                    // int length = sizeof(new_state) / sizeof(new_state[0]);
-                    // // printf("result %d\n", check_state(new_state, length));
-                    // if (check_state(new_state, length) == 1)
-                    // {
-                    //     push(state_counter - 1);
-                    // }
+                    int length = sizeof(new_state) / sizeof(new_state[0]);
+                    // printf("result %d\n", check_state(new_state, length));
+                    if (check_state(new_state, length) == 1)
+                    {
+                        push(state_counter - 1);
+                    }
                     moved = 0;
+                    printf("new_state\n");
+                    for (int l = 0; l < 100; l++)
+                    {
+                        if (new_state[l][0] == '\0')
+                        {
+                            break;
+                        }
+                        printf("%s\n", new_state[l]);
+                    }
                 }
 
                 printf("new_state\n");
@@ -587,23 +554,14 @@ int main()
                 printf("END\n");
                 printf("state: %d\n", current_state);
                 printf("CREATED: %d\n", created_state);
+                
             }
-            printf("new_state\n");
-            for (int l = 0; l < 100; l++)
-            {
-                if (new_state[l][0] == '\0')
-                {
-                    break;
-                }
-                printf("%s\n", new_state[l]);
-            }
-            printf("CHecking\n");
-            int length = sizeof(new_state) / sizeof(new_state[0]);
-            // printf("result %d\n", check_state(new_state, length));
-            if (check_state(new_state, length) == 1)
-            {
-                push(state_counter - 1);
-            }
+            // int length = sizeof(new_state) / sizeof(new_state[0]);
+            // // printf("result %d\n", check_state(new_state, length));
+            // if (check_state(new_state, length) == 1)
+            // {
+            //     push(state_counter - 1);
+            // }
             production_number++;
         }
         /* THIS PART IS FOR TERMINALS TRAVERSAL*/
@@ -623,12 +581,6 @@ int main()
 
                 if (state_list[current_state][i][0] == '\0')
                 {
-                    int length = sizeof(new_state) / sizeof(new_state[0]);
-                    // printf("result %d\n", check_state(new_state, length));
-                    if (check_state(new_state, length) == 1)
-                    {
-                        push(state_counter - 1);
-                    }
                     break;
                 }
                 for (int j = 0; j < strlen(state_list[current_state][i]); j++)
@@ -661,12 +613,12 @@ int main()
                         }
                         printf("%s\n", new_state[l]);
                     }
-                    // int length = sizeof(new_state) / sizeof(new_state[0]);
-                    // // printf("result %d\n", check_state(new_state, length));
-                    // if (check_state(new_state, length) == 1)
-                    // {
-                    //     push(state_counter - 1);
-                    // }
+                    int length = sizeof(new_state) / sizeof(new_state[0]);
+                    // printf("result %d\n", check_state(new_state, length));
+                    if (check_state(new_state, length) == 1)
+                    {
+                        push(state_counter - 1);
+                    }
                     moved = 0;
                 }
 
@@ -683,23 +635,12 @@ int main()
                 printf("state: %d\n", current_state);
                 printf("CREATED: %d\n", created_state);
             }
-            printf("new_state\n");
-            for (int l = 0; l < 100; l++)
-            {
-                if (new_state[l][0] == '\0')
-                {
-                    break;
-                }
-                printf("%s\n", new_state[l]);
-            }
-            printf("CHecking\n");
-            int length = sizeof(new_state) / sizeof(new_state[0]);
-            // printf("result %d\n", check_state(new_state, length));
-            if (check_state(new_state, length) == 1)
-            {
-                printf("added\n");
-                push(state_counter - 1);
-            }
+            // int length = sizeof(new_state) / sizeof(new_state[0]);
+            // // printf("result %d\n", check_state(new_state, length));
+            // if (check_state(new_state, length) == 1)
+            // {
+            //     push(state_counter - 1);
+            // }
 
             production_number++;
         }
